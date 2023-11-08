@@ -18,7 +18,7 @@ RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple/ -I --no-cache-dir ps
 RUN cd /tmp
 RUN git clone -b newnew --depth 1 https://github.com/DCUSnSLab/DCU_Online_Judge_Judger.git
 
-RUN cd Judger && mkdir build && cd build && cmake .. && make && make install && cd ../bindings/Python && python3 setup.py install && \
+RUN cd DCU_Online_Judge_Judger && mkdir build && cd build && cmake .. && make && make install && cd ../bindings/Python && python3 setup.py install && \
     apt-get purge -y --auto-remove $buildDeps && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /code
