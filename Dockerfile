@@ -28,4 +28,5 @@ ADD server /code
 WORKDIR /code
 RUN gcc -shared -fPIC -o unbuffer.so unbuffer.c
 EXPOSE 8080
-ENTRYPOINT /code/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/code/entrypoint.sh"]
+#ENTRYPOINT /code/entrypoint.sh
