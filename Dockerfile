@@ -23,7 +23,7 @@ RUN cd DCU_Online_Judge_Judger && mkdir build && cd build && cmake .. && make &&
     apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /code
 RUN useradd -u 12001 compiler && useradd -u 12002 code && useradd -u 12003 spj && usermod -a -G code spj
-HEALTHCHECK --interval=5s --retries=3 CMD python3 /code/service.py
+#HEALTHCHECK --interval=5s --retries=3 CMD python3 /code/service.py
 ADD server /code
 WORKDIR /code
 RUN gcc -shared -fPIC -o unbuffer.so unbuffer.c
