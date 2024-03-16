@@ -61,16 +61,8 @@ class JudgeClient(object):
     def _compare_output(self, test_case_file_id, user_output_file):
         with open(user_output_file, "rb") as f:
             content = f.read()
-
-        content = str(content)[2:-1] # str로 변경 
-        content_list = content.split('\\n') # 문자열을 줄바꿈 마다 split
-        new_content_list = []
-        for line in content_list :
-            new_content_list.append(line.rstrip()) # 각 행마다 rstrip()함수로 오른쪽 여백 제거
-        content = '\n'.join(new_content_list).encode('utf-8') # 리스트를 문자열로 변경 후 utf-8로 인코딩
         output_md5 = hashlib.md5(content.rstrip()).hexdigest()
         result = output_md5 == self._get_test_case_file_info(test_case_file_id)["stripped_output_md5"]
-      
         return output_md5, result
 
     def _spj(self, in_file_path, user_out_file_path):
