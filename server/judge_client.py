@@ -180,11 +180,9 @@ class JudgeClient(object):
     def run(self):
         tmp_result = []
         result = []
-        i = 0
-        for test_case_file_id, _ in self._test_case_info["test_cases"].items():
+        for i, (test_case_file_id, _) in enumerate(self._test_case_info["test_cases"].items()):
             tmp_result.append(self._pool.apply_async(_run, (self, test_case_file_id)))
-            i = i + 1
-            if self._sample_run_count == i:
+            if i + 1 == self._sample_run_count:
                 break
         self._pool.close()
         self._pool.join()
