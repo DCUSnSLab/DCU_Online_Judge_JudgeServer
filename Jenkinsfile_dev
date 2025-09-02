@@ -27,10 +27,10 @@ node {
         }
     }
 
-    // stage('Kubernetes deploy') {
-    //     sh "kubectl delete -f /services/dcucode/judge-server_real_con.yaml -n dcucode-dev"
-    //     sh "kubectl apply -f /services/dcucode/judge-server_real_con.yaml -n dcucode-dev"
-    // }
+    stage('Kubernetes deploy') {
+        sh "kubectl delete -f /services/dcucode/dev/judge-server_dev_con.yaml -n dcucode-dev"
+        sh "kubectl apply -f /services/dcucode/dev/judge-server_dev_con.yaml -n dcucode-dev"
+    }
 
     stage('Complete') {
         sh "echo 'The end'"
