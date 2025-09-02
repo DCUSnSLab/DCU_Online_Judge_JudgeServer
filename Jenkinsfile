@@ -30,9 +30,9 @@ node {
 
     stage('Kubernetes deploy') {
         sh "kubectl delete -f /services/dcucode/judge-server_real_con.yaml -n dcucode-test"
-        sh "kubectl delete -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
+        // sh "kubectl delete -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
         sh "kubectl apply -f /services/dcucode/judge-server_real_con.yaml -n dcucode-test"
-        sh "kubectl apply -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
+        // sh "kubectl apply -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
     }
 
     stage('Complete') {
