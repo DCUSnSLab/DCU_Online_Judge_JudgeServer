@@ -21,17 +21,18 @@ node {
 
     //docker image를 push하는 stage, 필자는 dockerhub에 이미지를 올렸으나 보통 private image repo를 별도 구축해서 사용하는것이 좋음
     stage('Push image') {
+        def BUILD_NUMBER_1 = BUILD_NUMBER.toInteger() + 4
         docker.withRegistry("https://harbor.cu.ac.kr", "harbor") {
             app.push("latest")
-            app.push("${env.BUILD_NUMBER}")
+            app.push("${env.BUILD_NUMBER_1}")
         }
     }
 
     stage('Kubernetes deploy') {
         sh "kubectl delete -f /services/dcucode/judge-server_real_con.yaml -n dcucode-test"
-        sh "kubectl delete -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
+        // sh "kubectl delete -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
         sh "kubectl apply -f /services/dcucode/judge-server_real_con.yaml -n dcucode-test"
-        sh "kubectl apply -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
+        // sh "kubectl apply -f /services/dcucoding/judge-server_real_con.yaml -n everycoding-test"
     }
 
     stage('Complete') {
