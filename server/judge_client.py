@@ -11,6 +11,11 @@ import psutil
 from config import TEST_CASE_DIR, JUDGER_RUN_LOG_PATH, RUN_GROUP_GID, RUN_USER_UID, SPJ_EXE_DIR, SPJ_USER_UID, SPJ_GROUP_GID, RUN_GROUP_GID
 from exception import JudgeClientError
 from utils import ProblemIOMode
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 
 SPJ_WA = 1
 SPJ_AC = 0
@@ -23,7 +28,7 @@ def _run(instance, test_case_file_id):
 
 class JudgeClient(object):
     def __init__(self, run_config, exe_path, max_cpu_time, max_memory, test_case_dir,
-                 submission_dir, spj_version, spj_config, io_mode, output=False):
+                 submission_dir, spj_version, spj_config, io_mode, output=False, sample_run_count=-1):
         self._run_config = run_config
         self._exe_path = exe_path
         self._max_cpu_time = max_cpu_time
@@ -31,6 +36,7 @@ class JudgeClient(object):
         self._max_real_time = self._max_cpu_time * 3
         self._test_case_dir = test_case_dir
         self._submission_dir = submission_dir
+        self._sample_run_count = sample_run_count
 
         self._pool = Pool(processes=psutil.cpu_count())
         self._test_case_info = self._load_test_case_info()
@@ -61,6 +67,12 @@ class JudgeClient(object):
     def _compare_output(self, test_case_file_id, user_output_file):
         with open(user_output_file, "rb") as f:
             content = f.read()
+        content = str(content, 'utf-8') # str로 변경 
+        content_list = content.split('\n') # 문자열을 줄바꿈 마다 split
+        new_content_list = []
+        for line in content_list :
+            new_content_list.append(line.rstrip()) # 각 행마다 rstrip()함수로 오른쪽 여백 제거
+        content = '\n'.join(new_content_list).encode('utf-8') # 리스트를 문자열로 변경 후 utf-8로 인코딩
         output_md5 = hashlib.md5(content.rstrip()).hexdigest()
         result = output_md5 == self._get_test_case_file_info(test_case_file_id)["stripped_output_md5"]
         return output_md5, result
@@ -179,8 +191,10 @@ class JudgeClient(object):
     def run(self):
         tmp_result = []
         result = []
-        for test_case_file_id, _ in self._test_case_info["test_cases"].items():
+        for i, (test_case_file_id, _) in enumerate(self._test_case_info["test_cases"].items()):
             tmp_result.append(self._pool.apply_async(_run, (self, test_case_file_id)))
+            if i + 1 == self._sample_run_count:
+                break
         self._pool.close()
         self._pool.join()
         for item in tmp_result:
